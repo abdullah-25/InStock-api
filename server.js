@@ -1,9 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const videos = require("./routes/videos");
-const app = express();
 
+const app = express();
+const warehouseRoute=require('./routes/routes');
 const PORT = process.env.PORT || 5050;
 
 // middleware
@@ -12,7 +12,7 @@ app.use(cors({ origin: process.env.CORS_ORIGIN }));
 app.use(express.static("public"));
 
 // register routes
-app.use("/videos", videos);
+app.use("/api/warehouses", warehouseRoute);
 
 // go!!
 app.listen(PORT, () => {
