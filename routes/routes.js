@@ -123,10 +123,18 @@ function postWarehouse(req, res) {
       res.status(200);
     });
 }
-
+function getInventoryfromWarehouse(req, res){
+    knex('inventories').where({warehouse_id:req.params.id}).then(response => {
+        return res.status(200).send(response);
+    }).catch(response => {
+        return res.status(404).send(response);
+    })
+}
 router.get("/", getWarehouses);
 router.get("/:id", getWarehouseDetail);
 router.patch("/:id", editWarehouse);
+router.get("/:id/inventories", getInventoryfromWarehouse);
+router.route("/:id").get(getWarehouseDetail);
 router.delete("/:id", deleteWarehouse);
 router.post("/", postWarehouse);
 module.exports = router;
