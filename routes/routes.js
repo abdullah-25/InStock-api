@@ -29,6 +29,23 @@ function getWarehouseDetail(req, res) {
     });
 }
 
+function deleteWarehouse(req, res) {
+  knex("warehouses")
+    .where({ id: req.params.id })
+    .del()
+    .then((result) => {
+      if (result === 0) {
+        return res.status(400).json({
+          message: `Warehouse ID: ${req.params.id} not found. Cannot be deleted`,
+        });
+      }
+      res.status(204).send();
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Unable to delete Warehouse" });
+    });
+}
+
 function postWarehouse(req, res) {
   const {
     warehouseName,
@@ -81,6 +98,7 @@ function postWarehouse(req, res) {
 }
 
 router.get("/", getWarehouses);
-router.get("/:id", getWarehouseDetail);
+router.route("/:id").get(getWarehouseDetail);
+router.delete("/:id", deleteWarehouse);
 router.post("/", postWarehouse);
 module.exports = router;
