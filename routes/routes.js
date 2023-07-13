@@ -1,7 +1,9 @@
 const express = require("express");
-const { v4 } = require("uuid");
 const router = express.Router();
+<<<<<<< HEAD
 const fs = require("node:fs");
+=======
+>>>>>>> develop
 const knex = require("knex")(require("../knexfile"));
 function getWarehouses(req, res) {
   knex("warehouses")
@@ -9,7 +11,11 @@ function getWarehouses(req, res) {
       res.status(200).json(data);
     })
     .catch((error) => {
+<<<<<<< HEAD
       res.staus(400).send(`error on retrieve warehouses ${error}`);
+=======
+      res.status(400).send(`error on retrieve warehouses ${error}`);
+>>>>>>> develop
     });
 }
 function getWarehouseDetail(req, res) {
@@ -31,6 +37,7 @@ function getWarehouseDetail(req, res) {
     });
 }
 
+<<<<<<< HEAD
 function deleteWarehouse(req, res) {
   knex("warehouses")
     .where({ id: req.params.id })
@@ -45,10 +52,65 @@ function deleteWarehouse(req, res) {
     })
     .catch(() => {
       res.status(500).json({ message: "Unable to delete Warehouse" });
+=======
+function postWarehouse(req, res) {
+  const {
+    warehouseName,
+    warehouseAddress,
+    warehouseCountry,
+    warehouseCity,
+    ContactName,
+    ContactPosition,
+    ContactPhone,
+    ContactEmail,
+  } = req.body;
+
+  const phoneno = /^\d{10}$/;
+  const regex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+  if (
+    !warehouseName ||
+    !warehouseAddress ||
+    !warehouseCountry ||
+    !warehouseCity ||
+    !ContactName ||
+    !ContactPosition ||
+    !ContactPhone ||
+    !ContactEmail
+  ) {
+    return res.status(400).send("Missing Properties");
+  }
+
+  if (!ContactPhone.match(phoneno) || !ContactEmail.match(regex)) {
+    return res.status(400).send("Invalid Phone or Email Address");
+  }
+
+  const newWarehouse = {
+    warehouseName,
+    warehouseAddress,
+    warehouseCountry,
+    warehouseCity,
+    ContactName,
+    ContactPosition,
+    ContactPhone,
+    ContactEmail,
+  };
+
+  knex("warehouses")
+    .insert(newWarehouse)
+    .then(() => {
+      res.status(200);
+>>>>>>> develop
     });
 }
 
 router.get("/", getWarehouses);
+<<<<<<< HEAD
 router.route("/:id").get(getWarehouseDetail);
 router.delete("/:id", deleteWarehouse);
+=======
+router.get("/:id", getWarehouseDetail);
+router.post("/", postWarehouse);
+>>>>>>> develop
 module.exports = router;
