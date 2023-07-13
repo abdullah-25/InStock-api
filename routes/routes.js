@@ -25,14 +25,13 @@ function getWarehouseDetail(req, res) {
       res.status(200).json(warehouseData);
     })
     .catch((error) => {
-      res
-        .status(500)
-        .json({
-          message: `unable to retrieve warehouse with ID ${req.params.id}`,
-        });
+      res.status(500).json({
+        message: `unable to retrieve warehouse with ID ${req.params.id}`,
+      });
     });
 }
-function deleteWarehouse(res, req) {
+
+function deleteWarehouse(req, res) {
   knex("warehouses")
     .where({ id: req.params.id })
     .del()
@@ -50,5 +49,6 @@ function deleteWarehouse(res, req) {
 }
 
 router.get("/", getWarehouses);
-router.get("/:id", getWarehouseDetail);
+router.route("/:id").get(getWarehouseDetail);
+router.delete("/:id", deleteWarehouse);
 module.exports = router;
