@@ -27,6 +27,8 @@ knex('warehouses')
     res.status(500).json({message:`unable to retrieve warehouse with ID ${req.params.id}`})
 })
 }
-router.get("/",getWarehouses)
+
+router.route("/").get(getWarehouses)
 router.get("/:id",getWarehouseDetail)
+
 module.exports=router

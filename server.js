@@ -5,9 +5,10 @@ const cors = require("cors");
 const app = express();
 const warehouseRoute=require('./routes/routes');
 const PORT = process.env.PORT || 5050;
-
+app.use(express.json())
 // middleware
 app.use(express.json());
+app.use(cors());
 app.use(cors({ origin: process.env.CORS_ORIGIN }));
 app.use(express.static("public"));
 
