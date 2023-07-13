@@ -12,5 +12,14 @@ function getInventories(req, res){
         return res.status(503).send("No inventories found");
     })
 }
+function getItemDetail(req, res){
+    knex("inventories").where("id", req.params.id).then(response => {
+        return res.status(200).send(response);
+    }).catch(error => {
+        console.log(error)
+        return res.status(503).send("No item found with that ID");
+    })
+}
 router.get('/', getInventories);
+router.get('/:id', getItemDetail)
 module.exports = router;
