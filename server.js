@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const warehouseRoute=require('./routes/routes');
-const inventoryRoute=require('./routes/inventories');
+const warehouseRoute = require("./routes/warehouses");
+const inventoryRoute = require("./routes/inventories");
 const PORT = process.env.PORT || 5050;
 
 // middleware
