@@ -29,17 +29,25 @@ function getWarehouseDetail(req, res) {
     });
 }
 
-function editWarehouse(res, req) {
+function editWarehouse(req, res) {
+  const info = req.body;
+  if (
+    !info.warehouse_name ||
+    !info.address ||
+    !info.country ||
+    !info.city ||
+    !info.contact_name ||
+    !info.contact_position ||
+    !info.contact_phone ||
+    !info.contact_email
+  ) {
+    return res.status(400).send("400 error: Needs all properites to be filled");
+  }
   knex("warehouses")
     .where({ id: req.params.id })
     .update(req.body)
     .then(() => {
-      return knex("warehouses").where({
-        id: req.params.id,
-      });
-    })
-    .then((updatedWarehouse) => {
-      res.json(updatedWarehouse[0]);
+      res.status(200).send("updated");
     })
     .catch(() => {
       res.status(500).json({
@@ -117,7 +125,7 @@ function postWarehouse(req, res) {
 }
 
 router.get("/", getWarehouses);
-router.route("/:id").get(getWarehouseDetail);
+router.get("/:id", getWarehouseDetail);
 router.patch("/:id", editWarehouse);
 router.delete("/:id", deleteWarehouse);
 router.post("/", postWarehouse);
