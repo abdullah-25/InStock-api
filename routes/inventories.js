@@ -13,7 +13,10 @@ function getInventories(req, res){
     })
 }
 function getItemDetail(req, res){
-    knex("inventories").where("id", req.params.id).then(response => {
+    knex('warehouses')
+  .join('inventories', 'warehouses.id', '=', 'inventories.warehouse_id')
+  .select('warehouse_name', 'inventories.*')
+  .where('inventories.id', req.params.id).then(response => {
         return res.status(200).send(response);
     }).catch(error => {
         console.log(error)
