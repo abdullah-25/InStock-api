@@ -1,7 +1,7 @@
 const express = require("express");
 const { v4 } = require("uuid");
 const router = express.Router();
-// const fs = require("node:fs");
+const fs = require("node:fs");
 const knex = require("knex")(require("../knexfile"));
 
 function getInventories(req, res) {
@@ -55,7 +55,28 @@ function editInventoryItem(req, res) {
       });
     });
 }
+
+router.patch("/:id", editInventoryItem);
+
+function deleteInventoryItem(req, res) {
+  knex("inventories")
+    .where({ id: req.params.id })
+    .del()
+    .then((result) => {
+      if (result === 0) {
+        return res.status(400).json({
+          message: `Item ID: ${req.params.id} not found. Cannot be deleted`,
+        });
+      }
+      res.status(204).send();
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Unable to delete Inventory Item" });
+    });
+}
+
+router.delete("/:id", deleteInventoryItem);
+
 router.get("/", getInventories);
 router.get("/:id", getItemDetail);
-router.patch("/:id", editInventoryItem);
 module.exports = router;
