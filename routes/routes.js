@@ -123,12 +123,15 @@ function postWarehouse(req, res) {
       res.status(200);
     });
 }
-function getInventoryfromWarehouse(req, res){
-    knex('inventories').where({warehouse_id:req.params.id}).then(response => {
-        return res.status(200).send(response);
-    }).catch(response => {
-        return res.status(404).send(response);
+function getInventoryfromWarehouse(req, res) {
+  knex("inventories")
+    .where({ warehouse_id: req.params.id })
+    .then((response) => {
+      return res.status(200).send(response);
     })
+    .catch((response) => {
+      return res.status(404).send(response);
+    });
 }
 router.get("/", getWarehouses);
 router.get("/:id", getWarehouseDetail);
