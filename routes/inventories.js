@@ -56,8 +56,6 @@ function editInventoryItem(req, res) {
     });
 }
 
-router.patch("/:id", editInventoryItem);
-
 function deleteInventoryItem(req, res) {
   knex("inventories")
     .where({ id: req.params.id })
@@ -75,8 +73,8 @@ function deleteInventoryItem(req, res) {
     });
 }
 
-router.delete("/:id", deleteInventoryItem);
-
 router.get("/", getInventories);
 router.get("/:id", getItemDetail);
+router.patch("/:id", editInventoryItem);
+router.delete("/:id", deleteInventoryItem);
 module.exports = router;
