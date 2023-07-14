@@ -29,6 +29,33 @@ function getWarehouseDetail(req, res) {
     });
 }
 
+function editWarehouse(req, res) {
+  const info = req.body;
+  if (
+    !info.warehouse_name ||
+    !info.address ||
+    !info.country ||
+    !info.city ||
+    !info.contact_name ||
+    !info.contact_position ||
+    !info.contact_phone ||
+    !info.contact_email
+  ) {
+    return res.status(400).send("400 error: Needs all properites to be filled");
+  }
+  knex("warehouses")
+    .where({ id: req.params.id })
+    .update(req.body)
+    .then(() => {
+      res.status(200).send("updated");
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: `Warehouse with ID: ${req.params.id} unable to updated`,
+      });
+    });
+}
+
 function deleteWarehouse(req, res) {
   knex("warehouses")
     .where({ id: req.params.id })
@@ -96,14 +123,19 @@ function postWarehouse(req, res) {
       res.status(200);
     });
 }
-function getInventoryfromWarehouse(req, res){
-    knex('inventories').where({warehouse_id:req.params.id}).then(response => {
-        return res.status(200).send(response);
-    }).catch(response => {
-        return res.status(404).send(response);
+function getInventoryfromWarehouse(req, res) {
+  knex("inventories")
+    .where({ warehouse_id: req.params.id })
+    .then((response) => {
+      return res.status(200).send(response);
     })
+    .catch((response) => {
+      return res.status(404).send(response);
+    });
 }
 router.get("/", getWarehouses);
+router.get("/:id", getWarehouseDetail);
+router.patch("/:id", editWarehouse);
 router.get("/:id/inventories", getInventoryfromWarehouse);
 router.route("/:id").get(getWarehouseDetail);
 router.delete("/:id", deleteWarehouse);

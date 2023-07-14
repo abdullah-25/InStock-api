@@ -28,6 +28,7 @@ function getItemDetail(req, res) {
       return res.status(503).send("No item found with that ID");
     });
 }
+
 function postInventories(req, res) {
   const { warehouse_id, item_name, description, category, status, quantity } =
     req.body;
