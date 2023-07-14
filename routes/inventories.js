@@ -69,8 +69,12 @@ function postInventories(req, res) {
         };
         knex("inventories")
           .insert(newInventories)
-          .then(() => {
-            res.sendStatus(200);
+          .then((result) => {
+            return knex("inventories")
+            .where({id:result[0]})
+          })
+          .then((response)=>{
+            res.status(201).json(response);
           })
           .catch((e) => {
             console.log(e);
