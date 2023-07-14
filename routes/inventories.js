@@ -29,52 +29,61 @@ function getItemDetail(req, res) {
     });
 }
 
-function editInventoryItem(req, res) {
-  const itemInfo = req.body;
+function postInventories(req, res) {
+  const { warehouse_id, item_name, description, category, status, quantity } =
+    req.body;
   if (
-    !itemInfo.warehouse_id ||
-    !itemInfo.item_name ||
-    !itemInfo.description ||
-    !itemInfo.category ||
-    !itemInfo.status ||
-    !itemInfo.quantity
+    !warehouse_id ||
+    !item_name ||
+    !description ||
+    !category ||
+    !status ||
+    !quantity
   ) {
-    return res
-      .status(400)
-      .send("400 Error: Needs all properites to be filled. Cat");
+    return res.status(400).send("Missing Properties");
   }
-  knex("inventories")
-    .where({ id: req.params.id })
-    .update(req.body)
-    .then(() => {
-      res.status(200).send("Updated");
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: `Item with ID: ${req.params.id} unable to updated`,
-      });
-    });
-}
+  if (isNaN(Number(quantity))) {
+    return res.status(400).send("Quantity must be a number");
+  }
 
-function deleteInventoryItem(req, res) {
-  knex("inventories")
-    .where({ id: req.params.id })
-    .del()
+
+
+  //   return res.send('ok')
+
+  knex("warehouses")
+    .where({ id: req.body.warehouse_id })
     .then((result) => {
-      if (result === 0) {
+      if (result.length === 0) {
         return res.status(400).json({
-          message: `Item ID: ${req.params.id} not found. Cannot be deleted`,
+          message: `Warehouse ID: ${req.body.warehouse_id} not found.`,
         });
+      } else {
+
+    
+        const newInventories = {
+          warehouse_id,
+          item_name,
+          description,
+          category,
+          status,
+          quantity,
+        };
+        knex("inventories")
+          .insert(newInventories)
+          .then((result) => {
+            return knex("inventories")
+            .where({id:result[0]})
+          })
+          .then((response)=>{
+            res.status(201).json(response);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
       }
-      res.status(204).send();
-    })
-    .catch(() => {
-      res.status(500).json({ message: "Unable to delete Inventory Item" });
     });
 }
-
 router.get("/", getInventories);
 router.get("/:id", getItemDetail);
-router.patch("/:id", editInventoryItem);
-router.delete("/:id", deleteInventoryItem);
+router.post("/", postInventories);
 module.exports = router;
