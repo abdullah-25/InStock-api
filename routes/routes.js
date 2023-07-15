@@ -30,22 +30,44 @@ function getWarehouseDetail(req, res) {
 }
 
 function editWarehouse(req, res) {
-  const info = req.body;
+  const {
+    warehouseName,
+    warehouseAddress,
+    warehouseCountry,
+    warehouseCity,
+    ContactName,
+    ContactPosition,
+    ContactPhone,
+    ContactEmail,
+  } = req.body;
+
   if (
-    !info.warehouse_name ||
-    !info.address ||
-    !info.country ||
-    !info.city ||
-    !info.contact_name ||
-    !info.contact_position ||
-    !info.contact_phone ||
-    !info.contact_email
+    !warehouseName ||
+    !warehouseAddress ||
+    !warehouseCountry ||
+    !warehouseCity ||
+    !ContactName ||
+    !ContactPosition ||
+    !ContactPhone ||
+    !ContactEmail
   ) {
-    return res.status(400).send("400 error: Needs all properites to be filled");
+    return res.status(400).send("Missing Properties");
   }
+
+  const editWarehouse = {
+    warehouse_name: warehouseName,
+    address: warehouseAddress,
+    country: warehouseCountry,
+    city: warehouseCity,
+    contact_name: ContactName,
+    contact_position: ContactPosition,
+    contact_phone: ContactPhone,
+    contact_email: ContactEmail,
+  };
+
   knex("warehouses")
     .where({ id: req.params.id })
-    .update(req.body)
+    .update(editWarehouse)
     .then(() => {
       res.status(200).send("updated");
     })
@@ -85,9 +107,7 @@ function postWarehouse(req, res) {
     ContactEmail,
   } = req.body;
 
-  console.log(req.body);
-
-  const phoneno = /^\d{10}$/;
+  const phoneno = /^\+\d{1}\s\(\d{3}\)\s\d{3}-\d{4}$/;
   const regex =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
@@ -118,6 +138,7 @@ function postWarehouse(req, res) {
     contact_phone: ContactPhone,
     contact_email: ContactEmail,
   };
+  console.log(newWarehouse);
 
   knex("warehouses")
     .insert(newWarehouse)
