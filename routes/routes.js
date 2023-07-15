@@ -85,6 +85,8 @@ function postWarehouse(req, res) {
     ContactEmail,
   } = req.body;
 
+  console.log(req.body);
+
   const phoneno = /^\d{10}$/;
   const regex =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -107,14 +109,14 @@ function postWarehouse(req, res) {
   }
 
   const newWarehouse = {
-    warehouseName,
-    warehouseAddress,
-    warehouseCountry,
-    warehouseCity,
-    ContactName,
-    ContactPosition,
-    ContactPhone,
-    ContactEmail,
+    warehouse_name: warehouseName,
+    address: warehouseAddress,
+    country: warehouseCountry,
+    city: warehouseCity,
+    contact_name: ContactName,
+    contact_position: ContactPosition,
+    contact_phone: ContactPhone,
+    contact_email: ContactEmail,
   };
 
   knex("warehouses")
@@ -127,10 +129,10 @@ function getInventoryfromWarehouse(req, res) {
   knex("inventories")
     .where({ warehouse_id: req.params.id })
     .then((response) => {
-      return res.status(200).send(response);
+      return res.status(200).send("Warehouse created successfully");
     })
     .catch((response) => {
-      return res.status(404).send(response);
+      return res.status(404).send("Internal Server Error");
     });
 }
 router.get("/", getWarehouses);
