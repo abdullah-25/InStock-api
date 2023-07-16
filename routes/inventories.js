@@ -13,7 +13,6 @@ function getInventories(req, res) {
       return res.status(200).send(response);
     })
     .catch((response) => {
-      console.log(response);
       return res.status(503).send("No inventories found");
     });
 }
