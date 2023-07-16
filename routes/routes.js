@@ -150,7 +150,7 @@ function getInventoryfromWarehouse(req, res) {
   knex("inventories")
     .where({ warehouse_id: req.params.id })
     .then((response) => {
-      return res.status(200).send("Warehouse created successfully");
+      return res.status(200).send(response);
     })
     .catch((response) => {
       return res.status(404).send("Internal Server Error");
