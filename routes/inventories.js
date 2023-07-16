@@ -28,7 +28,32 @@ function getItemDetail(req, res) {
       return res.status(503).send("No item found with that ID");
     });
 }
-
+function editInventoryItem(req, res) {
+  const itemInfo = req.body;
+  if (
+    !itemInfo.warehouse_id ||
+    !itemInfo.item_name ||
+    !itemInfo.description ||
+    !itemInfo.category ||
+    !itemInfo.status ||
+    !itemInfo.quantity
+  ) {
+    return res
+      .status(400)
+      .send("400 Error: Needs all properites to be filled. Cat");
+  }
+  knex("inventories")
+    .where({ id: req.params.id })
+    .update(req.body)
+    .then(() => {
+      res.status(200).send("Updated");
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: `Item with ID: ${req.params.id} unable to updated`,
+      });
+    });
+}
 function postInventories(req, res) {
   const { warehouse_id, item_name, description, category, status, quantity } =
     req.body;
@@ -83,7 +108,30 @@ function postInventories(req, res) {
       }
     });
 }
+
+router.patch("/:id", editInventoryItem);
+
+function deleteInventoryItem(req, res) {
+  knex("inventories")
+    .where({ id: req.params.id })
+    .del()
+    .then((result) => {
+      if (result === 0) {
+        return res.status(400).json({
+          message: `Item ID: ${req.params.id} not found. Cannot be deleted`,
+        });
+      }
+      res.status(204).send();
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Unable to delete Inventory Item" });
+    });
+}
+
+router.delete("/:id", deleteInventoryItem);
+
 router.get("/", getInventories);
 router.get("/:id", getItemDetail);
+
 router.post("/", postInventories);
 module.exports = router;
