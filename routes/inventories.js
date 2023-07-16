@@ -54,6 +54,7 @@ function editInventoryItem(req, res) {
       });
     });
 }
+
 function postInventories(req, res) {
   const { warehouse_id, item_name, description, category, status, quantity } =
     req.body;
