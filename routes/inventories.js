@@ -1,74 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("node:fs");
-const knex = require("knex")(require("../knexfile"));
+const invecontrol=require("../controllers/02_invecontrol")
 
-function getInventories(req, res) {
-  knex
-    .raw(
-      "select warehouse_name, inventories.* from warehouses left join inventories on warehouses.id = inventories.warehouse_id;"
-    )
-    .then((response) => {
-      return res.status(200).send(response);
-    })
-    .catch((response) => {
-      return res.status(503).send("No inventories found");
-    });
-}
-function getItemDetail(req, res) {
-  knex("inventories")
-    .where("id", req.params.id)
-    .then((response) => {
-      return res.status(200).send(response);
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(503).send("No item found with that ID");
-    });
-}
-function editInventoryItem(req, res) {
-  const itemInfo = req.body;
-  if (
-    !itemInfo.warehouse_id ||
-    !itemInfo.item_name ||
-    !itemInfo.description ||
-    !itemInfo.category ||
-    !itemInfo.status ||
-    !itemInfo.quantity
-  ) {
-    return res
-      .status(400)
-      .send("400 Error: Needs all properites to be filled. Cat");
-  }
-  knex("inventories")
-    .where({ id: req.params.id })
-    .update(req.body)
-    .then(() => {
-      res.status(200).send("Updated");
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: `Item with ID: ${req.params.id} unable to updated`,
-      });
-    });
-}
 
-function postInventories(req, res) {
-  const { warehouse_id, item_name, description, category, status, quantity } =
-    req.body;
-  if (
-    !warehouse_id ||
-    !item_name ||
-    !description ||
-    !category ||
-    !status ||
-    !quantity
-  ) {
-    return res.status(400).send("Missing Properties");
-  }
-  if (isNaN(Number(quantity))) {
-    return res.status(400).send("Quantity must be a number");
-  }
+
 
   //   return res.send('ok')
 
@@ -128,4 +64,12 @@ router.get("/", getInventories);
 router.get("/:id", getItemDetail);
 
 router.post("/", postInventories);
+=======
+router.delete("/:id", invecontrol.deleteInventoryItem);
+
+router.get("/", invecontrol.getInventories);
+router.get("/:id", invecontrol.getItemDetail);
+router.patch("/:id",invecontrol.editInventoryItem)
+router.post("/", invecontrol.postInventories);
+
 module.exports = router;

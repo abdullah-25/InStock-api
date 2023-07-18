@@ -1,99 +1,29 @@
 const express = require("express");
 const router = express.Router();
 const knex = require("knex")(require("../knexfile"));
+
+
 function getWarehouses(req, res) {
-  knex("warehouses")
+  const { sort_by } = req.query;
+  let warehousesQuery = knex("warehouses");
+
+  if (sort_by) {
+    const [column, order] = sort_by.split(" ");
+    warehousesQuery = warehousesQuery.orderBy(
+      column,
+      order === "ACS" ? "asc" : "desc"
+    );
+  }
+
+  warehousesQuery
     .then((data) => {
       res.status(200).json(data);
     })
     .catch((error) => {
-      res.status(400).send(`error on retrieve warehouses ${error}`);
-    });
-}
-function getWarehouseDetail(req, res) {
-  knex("warehouses")
-    .where({ id: req.params.id })
-    .then((warehouseFound) => {
-      if (warehouseFound.length === 0) {
-        return res
-          .status(404)
-          .json({ message: `warehouse with ID ${req.params.id} not found` });
-      }
-      const warehouseData = warehouseFound[0];
-      res.status(200).json(warehouseData);
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message: `unable to retrieve warehouse with ID ${req.params.id}`,
-      });
+      res.status(400).send(`Error retrieving warehouses: ${error}`);
     });
 }
 
-function editWarehouse(req, res) {
-  const {
-    warehouseName,
-    warehouseAddress,
-    warehouseCountry,
-    warehouseCity,
-    ContactName,
-    ContactPosition,
-    ContactPhone,
-    ContactEmail,
-  } = req.body;
-
-  if (
-    !warehouseName ||
-    !warehouseAddress ||
-    !warehouseCountry ||
-    !warehouseCity ||
-    !ContactName ||
-    !ContactPosition ||
-    !ContactPhone ||
-    !ContactEmail
-  ) {
-    return res.status(400).send("Missing Properties");
-  }
-
-  const editWarehouse = {
-    warehouse_name: warehouseName,
-    address: warehouseAddress,
-    country: warehouseCountry,
-    city: warehouseCity,
-    contact_name: ContactName,
-    contact_position: ContactPosition,
-    contact_phone: ContactPhone,
-    contact_email: ContactEmail,
-  };
-
-  knex("warehouses")
-    .where({ id: req.params.id })
-    .update(editWarehouse)
-    .then(() => {
-      res.status(200).send("updated");
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: `Warehouse with ID: ${req.params.id} unable to updated`,
-      });
-    });
-}
-
-function deleteWarehouse(req, res) {
-  knex("warehouses")
-    .where({ id: req.params.id })
-    .del()
-    .then((result) => {
-      if (result === 0) {
-        return res.status(400).json({
-          message: `Warehouse ID: ${req.params.id} not found. Cannot be deleted`,
-        });
-      }
-      res.status(204).send();
-    })
-    .catch(() => {
-      res.status(500).json({ message: "Unable to delete Warehouse" });
-    });
-}
 
 function postWarehouse(req, res) {
   const {
@@ -160,11 +90,17 @@ function getInventoryfromWarehouse(req, res) {
       return res.status(404).send("Internal Server Error");
     });
 }
+
+
+
+const warecontrol=require("../controllers/01_warecontrol")
+
 router.get("/", getWarehouses);
-router.get("/:id", getWarehouseDetail);
-router.patch("/:id", editWarehouse);
-router.get("/:id/inventories", getInventoryfromWarehouse);
-router.route("/:id").get(getWarehouseDetail);
-router.delete("/:id", deleteWarehouse);
-router.post("/", postWarehouse);
+router.get("/:id", warecontrol.getWarehouseDetail);
+router.patch("/:id", warecontrol.editWarehouse);
+router.get("/:id/inventories", warecontrol.getInventoryfromWarehouse);
+router.route("/:id").get(warecontrol.getWarehouseDetail);
+router.delete("/:id", warecontrol.deleteWarehouse);
+router.post("/", warecontrol.postWarehouse);
+
 module.exports = router;
