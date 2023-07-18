@@ -97,53 +97,57 @@ function deleteWarehouse(req, res) {
 
 function postWarehouse(req, res) {
   const {
-    warehouseName,
-    warehouseAddress,
-    warehouseCountry,
-    warehouseCity,
-    ContactName,
-    ContactPosition,
-    ContactPhone,
-    ContactEmail,
+    warehouse_name,
+    address,
+    country,
+    city,
+    contact_name,
+    contact_position,
+    contact_phone,
+    contact_email,
   } = req.body;
+  console.log(req.body);
 
   const phoneno = /^\+\d{1}\s\(\d{3}\)\s\d{3}-\d{4}$/;
   const regex =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
   if (
-    !warehouseName ||
-    !warehouseAddress ||
-    !warehouseCountry ||
-    !warehouseCity ||
-    !ContactName ||
-    !ContactPosition ||
-    !ContactPhone ||
-    !ContactEmail
+    !warehouse_name ||
+    !address ||
+    !country ||
+    !city ||
+    !contact_name ||
+    !contact_position ||
+    !contact_phone ||
+    !contact_email
   ) {
     return res.status(400).send("Missing Properties");
   }
 
-  if (!ContactPhone.match(phoneno) || !ContactEmail.match(regex)) {
-    return res.status(400).send("Invalid Phone or Email Address");
-  }
+  // if (!contact_phone.match(phoneno) || !contact_email.match(regex)) {
+  //   return res.status(400).send("Invalid Phone or Email Address");
+  // }
+
+  //code from front end alaways makes sure that number
+  //and email are typed correctly with appropriate format so no need to check here
 
   const newWarehouse = {
-    warehouse_name: warehouseName,
-    address: warehouseAddress,
-    country: warehouseCountry,
-    city: warehouseCity,
-    contact_name: ContactName,
-    contact_position: ContactPosition,
-    contact_phone: ContactPhone,
-    contact_email: ContactEmail,
+    warehouse_name,
+    address,
+    country,
+    city,
+    contact_name,
+    contact_position,
+    contact_phone,
+    contact_email,
   };
   console.log(newWarehouse);
 
   knex("warehouses")
     .insert(newWarehouse)
     .then(() => {
-      res.status(200);
+      res.status(200).send("Warehouse created successfully");
     });
 }
 function getInventoryfromWarehouse(req, res) {

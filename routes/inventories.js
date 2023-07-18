@@ -1,5 +1,4 @@
 const express = require("express");
-const { v4 } = require("uuid");
 const router = express.Router();
 const fs = require("node:fs");
 const knex = require("knex")(require("../knexfile"));
@@ -71,8 +70,6 @@ function postInventories(req, res) {
     return res.status(400).send("Quantity must be a number");
   }
 
-
-
   //   return res.send('ok')
 
   knex("warehouses")
@@ -83,8 +80,6 @@ function postInventories(req, res) {
           message: `Warehouse ID: ${req.body.warehouse_id} not found.`,
         });
       } else {
-
-    
         const newInventories = {
           warehouse_id,
           item_name,
@@ -96,10 +91,9 @@ function postInventories(req, res) {
         knex("inventories")
           .insert(newInventories)
           .then((result) => {
-            return knex("inventories")
-            .where({id:result[0]})
+            return knex("inventories").where({ id: result[0] });
           })
-          .then((response)=>{
+          .then((response) => {
             res.status(201).json(response);
           })
           .catch((e) => {
