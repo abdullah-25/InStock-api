@@ -10,7 +10,7 @@ function getWarehouses(req, res) {
     const [column, order] = sort_by.split(" ");
     warehousesQuery = warehousesQuery.orderBy(
       column,
-      order === "ACS" ? "warehouse_name ACS" : "warehouse_name DESC"
+      order === "ACS" ? "asc" : "desc"
     );
   }
 
@@ -23,15 +23,6 @@ function getWarehouses(req, res) {
     });
 }
 
-// function getWarehouses(req, res) {
-//   knex("warehouses")
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((error) => {
-//       res.status(400).send(`error on retrieve warehouses ${error}`);
-//     });
-// }
 function getWarehouseDetail(req, res) {
   knex("warehouses")
     .where({ id: req.params.id })
